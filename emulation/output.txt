@@ -1,0 +1,370 @@
+Pod 0: 477 285 100
+Pod 1: 379 54 100
+Pod 2: 308 4 100
+Player: 477 285 100
+Player in pod 0
+Intersection: 377 185 102 -31
+Player in pod 1
+Intersection: 338 44 70 60
+Player in pod 2
+Intersection: 377 185 126 -23
+Player in pod 0
+Intersection: 383 91 96 63
+Player in pod 1
+Intersection: 365 50 43 54
+Player in pod 2
+Intersection: 377 185 127 -75
+Player in pod 0
+Intersection: 415 86 64 68
+Player in pod 1
+Intersection: 376 -6 32 110
+Player in pod 2
+Intersection: 377 185 123 -69
+Player in pod 0
+Intersection: 409 89 70 65
+Player in pod 1
+Intersection: 375 10 33 94
+Player in pod 2
+Intersection: 377 185 123 -76
+Player in pod 0
+Intersection: 410 86 69 68
+Player in pod 1
+Intersection: 376 8 32 96
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Player in pod 1
+Intersection: 377 9 31 95
+Player in pod 2
+Intersection: 377 185 128 -67
+Player in pod 0
+Intersection: 413 91 66 63
+Points captured: 490 264
+Points captured: 481 243
+Points captured: 473 224
+Points captured: 465 207
+Points captured: 458 192
+Points captured: 452 178
+Points captured: 447 165
+Points captured: 442 154
+Points captured: 438 144
+Points captured: 431 127
+Points captured: 424 112
+Points captured: 418 98
+Points captured: 413 85
+Points captured: 408 73
+Points captured: 403 62
+Points captured: 415 81
+Points captured: 426 98
+Points captured: 436 114
+Points captured: 445 128
+Points captured: 453 141
+Points captured: 460 153
+Points captured: 467 164
+Points captured: 473 174
+Points captured: 478 183
+Points captured: 483 191
+Points captured: 476 176
+Points captured: 470 162
+Points captured: 465 150
+Points captured: 457 131
+Points captured: 449 114
+Points captured: 442 98
+Points captured: 436 84
+Points captured: 430 71
+Points captured: 425 59
+Points captured: 420 48
+Points captured: 416 38
+Points captured: 412 28
+Points captured: 408 19
+Points captured: 404 10
+Points captured: 419 33
+Points captured: 432 54
+Points captured: 444 73
+Points captured: 455 91
+Points captured: 465 107
+Points captured: 474 121
+Points captured: 482 134
+Points captured: 490 146
+Points captured: 497 157
+Points captured: 503 167
+Points captured: 509 177
+Points captured: 515 186
+Points captured: 508 169
+Points captured: 501 154
+Points captured: 495 140
+Points captured: 490 127
+Points captured: 485 115
+Points captured: 480 104
+Points captured: 476 94
+Points captured: 469 77
+Points captured: 462 61
+Points captured: 456 47
+Points captured: 450 33
+Points captured: 445 20
+Points captured: 432 19
+Points captured: 420 18
+Points captured: 409 17
+Points captured: 400 16
+Points captured: 415 39
+Points captured: 428 60
+Points captured: 440 79
+Points captured: 451 96
+Points captured: 461 111
+Points captured: 470 125
+Points captured: 478 138
+Points captured: 485 150
+Points captured: 492 161
+Points captured: 498 171
+Points captured: 504 180
+Points captured: 509 189
+Points captured: 502 172
+Points captured: 495 157
+Points captured: 489 143
+Points captured: 484 131
+Points captured: 479 120
+Points captured: 475 110
+Points captured: 467 93
+Points captured: 460 77
+Points captured: 454 62
+Points captured: 448 48
+Points captured: 442 35
+Points captured: 437 23
+Points captured: 432 12
+Points captured: 420 11
+Points captured: 409 10
+Points captured: 400 9
+Points captured: 415 33
+Points captured: 428 54
+Points captured: 440 73
+Points captured: 451 91
+Points captured: 461 107
+Points captured: 470 121
+Points captured: 478 134
+Points captured: 486 146
+Points captured: 493 157
+Points captured: 499 167
+Points captured: 505 177
+Points captured: 510 186
+Points captured: 503 170
+Points captured: 496 155
+Points captured: 490 141
+Points captured: 485 129
+Points captured: 480 118
+Points captured: 476 108
+Points captured: 468 91
+Points captured: 461 75
+Points captured: 455 60
+Points captured: 449 46
+Points captured: 443 33
+Points captured: 438 21
+Points captured: 426 20
+Points captured: 415 19
+Points captured: 405 18
+Points captured: 419 41
+Points captured: 432 62
+Points captured: 444 81
+Points captured: 455 98
+Points captured: 465 113
+Points captured: 474 127
+Points captured: 482 140
+Points captured: 489 152
+Points captured: 496 163
+Points captured: 502 173
+Points captured: 508 182
+Points captured: 513 191
+Points captured: 506 174
+Points captured: 499 159
+Points captured: 493 145
+Points captured: 487 132
+Points captured: 482 120
+Points captured: 477 109
+Points captured: 469 91
+Points captured: 462 75

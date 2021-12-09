@@ -1,0 +1,1 @@
+#define DEBUG(msg) std::cerr << msg << std::endl;
