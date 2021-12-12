@@ -1,6 +1,20 @@
 #include <string>
+#include <vector>
 
-struct State {
+struct AwareArea {
+    int radius = 4400;
+    int closest_allowed = 2000;
+    float threshold = 0.05;
+};
+
+struct Checkpoint {
+    int x;
+    int y;
+    static const int radius = 600;
+};
+
+struct State
+{
     int x;
     int y;
     int next_checkpoint_x;
@@ -9,6 +23,16 @@ struct State {
     int next_checkpoint_angle;
     int opponent_x;
     int opponent_y;
+
+    int target_x;
+    int target_y;
+    int power;
+
+    std::vector<Checkpoint> checkpoints;
+
+    AwareArea aware_area;
+
+    std::string action;
 
     std::string getName() {
         return "Mud";

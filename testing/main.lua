@@ -53,8 +53,11 @@ function love.update(dt)
         return
     end
 
-    bot.x = bot.x + match_data.points[curr_point].x
-    bot.y = bot.y + match_data.points[curr_point].y
+    bot.x = match_data.points[curr_point].x
+    bot.y = match_data.points[curr_point].y
+    for k,v in pairs(match_data.points[curr_point]) do
+        print(k, v)
+    end
 
     -- Increase current point
     curr_point = curr_point + 1
@@ -71,4 +74,23 @@ function love.draw()
     -- Set color to yellow
     love.graphics.setColor(255, 255, 0)
     love.graphics.circle("fill", bot.x, bot.y, bot.sqr_area)
+
+    -- Print the current bot position at the top left corner
+    love.graphics.print("X: " .. bot.x .. " Y: " .. bot.y, 0, 0)
+
+    -- Draw a line between the bot and the closest pod
+    local closest_pod = match_data.pods[1]
+    local closest_dist = math.sqrt((bot.x - closest_pod.x) ^ 2 + (bot.y - closest_pod.y) ^ 2)
+    for i = 2, #match_data.pods do
+        local pod = match_data.pods[i]
+        local dist = math.sqrt((bot.x - pod.x) ^ 2 + (bot.y - pod.y) ^ 2)
+        if dist < closest_dist then
+            closest_pod = pod
+            closest_dist = dist
+        end
+    end
+    love.graphics.line(bot.x, bot.y, closest_pod.x, closest_pod.y)
+
+    -- Draw a circle 5px bigger than the closest pod and make it red
+    love.graphics.circle("line", closest_pod.x, closest_pod.y, closest_pod.radius + 5)
 end

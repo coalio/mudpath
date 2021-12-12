@@ -22,28 +22,22 @@ class Runtime {
 };
 
 void Runtime::get_input() {
-    std::cin
-        >> x
-        >> y
-        >> next_checkpoint_x
-        >> next_checkpoint_y
-        >> next_checkpoint_dist
-        >> next_checkpoint_angle,
-    std::cin.ignore(),
-    std::cin
-        >> opponent_x
-        >> opponent_y,
-    std::cin.ignore(),
-    std::cout << next_checkpoint_x << " " << next_checkpoint_y << " 80" << std::endl;
+    std::cin >> x >> y >> next_checkpoint_x >> next_checkpoint_y >> next_checkpoint_dist >> next_checkpoint_angle;
+    std::cin.ignore();
+    std::cin >> opponent_x >> opponent_y;
+    std::cin.ignore();
 }
 
 void Runtime::start() {
     std::shared_ptr<State> state(new State());
     std::shared_ptr<Mudpath> bot = std::make_shared<Mudpath>(state);
 
+    int current_turn = 0;
     while (
-        this->get_input(), true
-    ) {
+        this->get_input(), true)
+    {
+        current_turn++;
+        DEBUG("Turn: " << current_turn);
         std::unique_ptr<State> updated_state(new State());
         updated_state->x = x;
         updated_state->y = y;
@@ -56,6 +50,10 @@ void Runtime::start() {
 
         // Update state
         bot->update_state(updated_state);
+        // Update bot
+        bot->update(current_turn);
+        // Output
+        bot->output();
     }
 }
 

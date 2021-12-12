@@ -66,12 +66,12 @@ int main(const int argc, const char *argv[]) {
         pod.radius = 10;
         params["pod" + std::to_string(i)] = pod;
 
-        // Verify that the pod is at least radius + 100 away from the other pods, if not, move
+        // Verify that the pod is at least radius + CANVAS_SIZE / 2 away from the other pods, if not, move
         for (int j = 0; j < i; j++) {
             Pod other = params["pod" + std::to_string(j)];
-            if (std::abs(pod.x - other.x) < pod.radius + other.radius + 100) {
-                pod.x = pod.x + rand() % CANVAS_SIZE + other.radius + 100;
-                pod.y = pod.y + rand() % CANVAS_SIZE + other.radius + 100;
+            if (std::abs(pod.x - other.x) < pod.radius + other.radius + CANVAS_SIZE / 2) {
+                pod.x = pod.x + rand() % CANVAS_SIZE + other.radius + CANVAS_SIZE / 2;
+                pod.y = pod.y + rand() % CANVAS_SIZE + other.radius + CANVAS_SIZE / 2;
                 j = -1;
             }
         }
@@ -106,10 +106,12 @@ int main(const int argc, const char *argv[]) {
     for (int i = 0; i < EMULATION_FRAMES; i++) {
         // Move the player
         // Check if the player is in the pod
-        if (std::abs(bot.x - next_pod.x) < bot.sqr_area && std::abs(bot.y - next_pod.y) < bot.sqr_area) {
+        std::cout << "Next pod position: " << next_pod.x << " " << next_pod.y << std::endl;
+        if (std::abs(bot.x - next_pod.x) < next_pod.radius + 5 && std::abs(bot.y - next_pod.y) < next_pod.radius + 5) {
             // If the current pod is the last pod, go back to the first pod
             std::cout << "Player in pod " << curr_pod % 3 << std::endl;
-            next_pod = params["pod" + std::to_string(++curr_pod % 3)];
+            curr_pod = ++curr_pod > 2 ? 0 : curr_pod;
+            next_pod = params["pod" + std::to_string(curr_pod)];
             // Detect the area that is intersecting with the pod
             Area intersection;
             intersection.x = std::max(bot.x - bot.sqr_area, next_pod.x - next_pod.radius);
@@ -128,6 +130,16 @@ int main(const int argc, const char *argv[]) {
             int angle = std::atan2(distance_y, distance_x);
             bot.velocity_x = std::cos(angle) * distance / 10;
             bot.velocity_y = std::sin(angle) * distance / 10;
+
+            // If bot.velocity > 10, set it to 10
+            if (std::abs(bot.velocity_x) > 10) {
+                bot.velocity_x = bot.velocity_x > 0 ? 10 : -10;
+            }
+
+            if (std::abs(bot.velocity_y) > 10) {
+                bot.velocity_y = bot.velocity_y > 0 ? 10 : -10;
+            }
+
             // Turn the player towards the next pod
             bot.angle = angle;
             // Move towards the angle
@@ -147,9 +159,9 @@ int main(const int argc, const char *argv[]) {
     }
 
     // Print the points
-    for (Point point : points) {
-        std::cout << "Points captured: " << point.x << " " << point.y << std::endl;
-    }
+    // for (Point point : points) {
+    //     std::cout << "Points captured: " << point.x << " " << point.y << std::endl;
+    // }
 
     if (args.find("--save") != args.end()) {
         std::ofstream file(args["--save"]);

@@ -38,7 +38,21 @@ void read_files_curr(
     }
 }
 
-int main() {
+int main(const int argc, const char *argv[]) {
+    // Get command line arguments
+    std::map<std::string, std::string> args;
+    for (int i = 1; i < argc; i++) {
+        std::string arg = argv[i];
+        std::string key = arg.substr(0, arg.find("="));
+        std::string value = arg.substr(arg.find("=") + 1);
+        args[key] = value;
+    }
+
+    bool keep_compiled = false;
+    if (args.find("--keep") != args.end()) {
+        keep_compiled = true;
+    }
+
     // Read .sourceignore file by lines
     std::vector<std::string> exclude;
     std::ifstream sourceignore(".sourcerignore");
@@ -129,8 +143,42 @@ int main() {
     }
 
     // Write main-copy.cpp
-    std::ofstream main_copy_file("mudpath.cpp");
+    std::ofstream main_copy_file("mudpath-test.cpp");
     main_copy_file << main_file_content_new;
     main_copy_file.close();
-    std::cout << "[sourcer] Wrote mudpath.cpp" << std::endl;
+    std::cout << "[sourcer] Wrote mudpath test" << std::endl;
+
+    // Attempt to compile mudpath-test.cpp
+    std::cout << "[sourcer] Compiling mudpath test" << std::endl;
+    std::string compile_command = "g++ -std=c++17 -o mudpath-test mudpath-test.cpp";
+    auto pipe = popen(compile_command.c_str(), "r");
+    if (!pipe) {
+        throw std::runtime_error("[sourcer] Unable to compile mudpath test. Popen failed.");
+    }
+    auto status = pclose(pipe);
+    if (status != 0) {
+        if (!keep_compiled) {
+            std::remove("mudpath-test.cpp");
+        }
+
+        throw std::runtime_error("[sourcer] Unable to compile mudpath test. Compilation failed.");
+    }
+    std::cout << "[sourcer] Compiled mudpath test" << std::endl;
+
+    // Rename mudpath-test.cpp to mudpath.cpp
+    std::cout << "[sourcer] Renaming mudpath test to mudpath" << std::endl;
+    std::rename("mudpath-test.cpp", "mudpath.cpp");
+    std::cout << "[sourcer] Renamed mudpath test to mudpath." << std::endl;
+    // Delete temp files
+    std::vector<std::string> temp_files = {
+        "mudpath-test",
+        "mudpath"
+    };
+
+    for (const auto &file : temp_files)
+    {
+        std::remove(file.c_str());
+    }
+    std::cout << "[sourcer] Deleted temp files" << std::endl;
+    std::cout << "[sourcer] Done" << std::endl;
 }

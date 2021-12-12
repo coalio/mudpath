@@ -57,5 +57,24 @@
         "map": "cpp",
         "shared_mutex": "cpp",
         "variant": "cpp"
-    }
+    },
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.cpp$",
+                "cmd": "./sourcer"
+            },
+            {
+                "match": "\\.h$",
+                "cmd": "./sourcer"
+            }
+        ]
+    },
+    "files.exclude": {
+        "mudpath.cpp": true,
+        "sourcer": true,
+        "mudpath": true
+    },
+    "editor.formatOnType": false,
+    "editor.formatOnSave": false
 }
