@@ -4,6 +4,7 @@
 #include "utilities.h"
 #include "state.h"
 #include "bot.h"
+#include "algorithm"
 
 /*
 int x;
@@ -109,11 +110,22 @@ void Mudpath::update(int current_turn) {
     }
 
     // Draw an imaginary circle, the top left corner of the circle will be the center
-    // of the checkpoint. The radius of the circle will be the same as the checkpoint.
+    // of the checkpoint. The radius of the circle will be the one of the checkpoint * 1.5
     Circle steering_circle;
     steering_circle.radius = Checkpoint::radius * 1.5;
-    steering_circle.center.x = this->state->next_checkpoint_x + steering_circle.radius / 2;
-    steering_circle.center.y = this->state->next_checkpoint_y + steering_circle.radius / 2;
+    // If the next_checkpoint_x is > to the CANVAS_WIDTH / 2
+    if (this->state->next_checkpoint_x > CANVAS_WIDTH / 2) {
+        steering_circle.center.x = this->state->next_checkpoint_x - steering_circle.radius / 2;
+    } else {
+        steering_circle.center.x = this->state->next_checkpoint_x + steering_circle.radius / 2;
+    }
+
+    // If the next_checkpoint_y is > to the CANVAS_HEIGHT / 2
+    if (this->state->next_checkpoint_y > CANVAS_HEIGHT / 2) {
+        steering_circle.center.y = this->state->next_checkpoint_y - steering_circle.radius / 2;
+    } else {
+        steering_circle.center.y = this->state->next_checkpoint_y + steering_circle.radius / 2;
+    }
 
     // Aim to the angle distance_compensation of the circle, 0 being the bottom and 90 being the right
     int angle_distance = distance_compensation;
