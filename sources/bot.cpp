@@ -116,8 +116,7 @@ void Mudpath::update(int current_turn) {
 
     // Draw an imaginary circle, the top left corner of the circle will be the center
     // of the checkpoint. The radius of the circle will be the one of the checkpoint * 1.5
-    Circle steering_circle;
-    steering_circle.radius = Checkpoint::radius / 2;
+    steering_circle.radius = Checkpoint::radius * 0.5;
     steering_circle.center.x = this->state->next_checkpoint_x;
     steering_circle.center.y = this->state->next_checkpoint_y;
 

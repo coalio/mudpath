@@ -6,6 +6,7 @@
 
 class Mudpath {
 private:
+    Circle steering_circle;
     std::shared_ptr<State> state;
 public:
     Mudpath(std::shared_ptr<State> state) : state(state) {
