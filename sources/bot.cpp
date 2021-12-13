@@ -5,6 +5,7 @@
 #include "state.h"
 #include "bot.h"
 #include "algorithm"
+#define LEAGUE 1 // 1 = Wood, 2 = Bronze, 3 = Silver, 4 = Gold, 5 = Legend
 
 /*
 int x;
@@ -95,41 +96,41 @@ void Mudpath::update(int current_turn) {
     int distance_x = this->state->opponent_x - this->state->x;
     int distance_y = this->state->opponent_y - this->state->y;
 
-    if (
-        this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed
-        // If the distance of the opponent is less than closest_allowed / 2
-        && (
-               std::abs(distance_x) < this->state->aware_area.closest_allowed / 2
-            || std::abs(distance_y) < this->state->aware_area.closest_allowed / 2
-           )
-        // If the angle is 7 or less
-        && std::abs(this->state->next_checkpoint_angle) <= 7
-    ) {
-        // Enable shield to reduce impaect
-        // this->state->action = "SHIELD";
+    // TODO: Fix this. The shield should be enabled when the opponent is surely colliding
+    // and the velocity is enough to recover from the collision
+    if (LEAGUE > 2) {
+        if (
+            this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed
+            // If the distance of the opponent is less than closest_allowed / 2
+            && (
+                std::abs(distance_x) < this->state->aware_area.closest_allowed / 2
+                || std::abs(distance_y) < this->state->aware_area.closest_allowed / 2
+            )
+            // If the angle is 7 or less
+            && std::abs(this->state->next_checkpoint_angle) <= 7
+        ) {
+            // Enable shield to reduce impaect
+            // this->state->action = "SHIELD";
+        }
     }
 
     // Draw an imaginary circle, the top left corner of the circle will be the center
     // of the checkpoint. The radius of the circle will be the one of the checkpoint * 1.5
     Circle steering_circle;
-    steering_circle.radius = Checkpoint::radius * 1.5;
-    // If the next_checkpoint_x is > to the CANVAS_WIDTH / 2
-    if (this->state->next_checkpoint_x > CANVAS_WIDTH / 2) {
-        steering_circle.center.x = this->state->next_checkpoint_x - steering_circle.radius / 2;
-    } else {
-        steering_circle.center.x = this->state->next_checkpoint_x + steering_circle.radius / 2;
-    }
-
-    // If the next_checkpoint_y is > to the CANVAS_HEIGHT / 2
-    if (this->state->next_checkpoint_y > CANVAS_HEIGHT / 2) {
-        steering_circle.center.y = this->state->next_checkpoint_y - steering_circle.radius / 2;
-    } else {
-        steering_circle.center.y = this->state->next_checkpoint_y + steering_circle.radius / 2;
-    }
+    steering_circle.radius = Checkpoint::radius / 2;
+    steering_circle.center.x = this->state->next_checkpoint_x;
+    steering_circle.center.y = this->state->next_checkpoint_y;
 
     // Aim to the angle distance_compensation of the circle, 0 being the bottom and 90 being the right
-    int angle_distance = distance_compensation;
+    int angle_distance = 180 - this->state->next_checkpoint_angle;
+    // Find the angle of the bot from the center of the circle
+    float bot_angle = (std::atan2(
+        this->state->y - steering_circle.center.y,
+        this->state->x - steering_circle.center.x
+    ) * 360 / M_PI);
+    angle_distance = angle_distance + bot_angle;
     DEBUG("Angle distance: " << angle_distance);
+    DEBUG("Bot angle: " << bot_angle);
     int angle_x = steering_circle.radius * std::sin(M_PI * 2 * angle_distance / 360);
     int angle_y = steering_circle.radius * std::cos(M_PI * 2 * angle_distance / 360);
     DEBUG("Angle X: " << angle_x);
@@ -141,13 +142,6 @@ void Mudpath::update(int current_turn) {
     DEBUG("Absolute angle Y: " << absolute_angle_y);
     this->state->target_x = absolute_angle_x;
     this->state->target_y = absolute_angle_y;
-
-    // If distance is < closest_allowed, aim at the next_checkpoint_x and next_checkpoint_y
-    // near the center of the map
-    if (this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed * 2) {
-        this->state->target_x = this->state->next_checkpoint_x;
-        this->state->target_y = this->state->next_checkpoint_y;
-    }
 
     // If the angle is > 30, set power to 0
     if (std::abs(this->state->next_checkpoint_angle) > MAX_ANGLE) {
@@ -162,17 +156,20 @@ void Mudpath::update(int current_turn) {
         std::pow(this->state->opponent_x - this->state->x, 2)
         + std::pow(this->state->opponent_y - this->state->y, 2)
     );
-    if (
-        opponent_distance < this->state->aware_area.closest_allowed
-        && this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed
-        && is_boost_available
-    ) {
-        // If the angle is < MAX_ANGLE / 2, aim at the opponent
-        if (std::abs(this->state->next_checkpoint_angle) < MAX_ANGLE / 2) {
-            is_boost_available = false;
-            this->state->target_x = this->state->opponent_x - 40;
-            this->state->target_y = this->state->opponent_y - 40;
-            this->state->action = "BOOST";
+
+    if (LEAGUE > 1) { // Collisions are enabled after Wood league
+        if (
+            opponent_distance < this->state->aware_area.closest_allowed
+            && this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed
+            && is_boost_available
+        ) {
+            // If the angle is < MAX_ANGLE / 2, aim at the opponent
+            if (std::abs(this->state->next_checkpoint_angle) < MAX_ANGLE / 2) {
+                is_boost_available = false;
+                this->state->target_x = this->state->opponent_x - 40;
+                this->state->target_y = this->state->opponent_y - 40;
+                this->state->action = "BOOST";
+            }
         }
     }
 
