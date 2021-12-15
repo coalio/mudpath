@@ -15,4 +15,4 @@ Update the [`LEAGUE`](https://github.com/coalio/mudpath/blob/e49ebfba41487cf31ea
 
 ## Notes
 
-I don't condemn the usage of my bot for cheating in Mad Pod Racing. However, it is a sinny evil action and I would seriously doubt about my skills as a programmer if I had to use someone else's work to success in life.
+I don't condemn the usage of my bot for cheating in Mad Pod Racing. However, it is a sinny evil action and I would seriously doubt about my skills as a programmer if I had to use someone else's work to succeed in life.
