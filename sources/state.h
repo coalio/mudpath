@@ -1,16 +1,11 @@
 #include <string>
 #include <vector>
+#include "utilities.h"
 
 struct AwareArea {
     int radius = 4400;
     int closest_allowed = 2000;
     float threshold = 0.05;
-};
-
-struct Checkpoint {
-    int x;
-    int y;
-    static const int radius = 600;
 };
 
 struct State

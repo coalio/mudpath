@@ -15,7 +15,7 @@ class Runtime {
         int next_checkpoint_x, next_checkpoint_y;
         int next_checkpoint_dist, next_checkpoint_angle;
         int opponent_x, opponent_y;
-        std::shared_ptr<Mudpath> bot;
+        std::shared_ptr<Bot> bot;
     public:
         void start();
         void get_input();
@@ -30,7 +30,7 @@ void Runtime::get_input() {
 
 void Runtime::start() {
     std::shared_ptr<State> state(new State());
-    std::shared_ptr<Mudpath> bot = std::make_shared<Mudpath>(state);
+    std::shared_ptr<Bot> bot = std::make_shared<Bot>(state);
 
     int current_turn = 0;
     while (

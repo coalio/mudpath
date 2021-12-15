@@ -1,25 +1,25 @@
+#include <memory>
+#include <iostream>
+#include <string>
 #include "utilities.h"
 #include "state.h"
 #include "debug.h"
-#include <memory>
-#include <iostream>
 
-class Mudpath {
+class Bot {
 private:
     Circle steering_circle;
     std::shared_ptr<State> state;
+    std::shared_ptr<State> old_state;
 public:
-    Mudpath(std::shared_ptr<State> state) : state(state) {
+    Bot(std::shared_ptr<State> state) : state(state) {
         DEBUG("Started Mudpath: " << state->getName())
     }
 
     Point target;
 
-    int getX();
-    int getY();
-
     void setTarget(int x, int y);
-    void setAcceleration(int acc);
+    void setAcceleration(int acceleration);
+    void setAction(std::string action);
     void aimForAttack();
 
     void update_state(std::unique_ptr<State> &state);
