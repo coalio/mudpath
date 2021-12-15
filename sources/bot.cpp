@@ -31,32 +31,6 @@ void Bot::update_state(std::unique_ptr<State>& state) {
     DEBUG("Next checkpoint angle: " << this->state->next_checkpoint_angle);
     DEBUG("Opponent X: " << this->state->opponent_x);
     DEBUG("Opponent Y: " << this->state->opponent_y);
-
-    if (LEAGUE < 6) {
-        Checkpoint checkpoint;
-        checkpoint.x = this->state->next_checkpoint_x;
-        checkpoint.y = this->state->next_checkpoint_y;
-
-        // Check if checkpoint is not present in this->state->checkpoints
-        // TODO: Fix this, it's not working
-        // TODO: Also fix the orbiting bug which causes us to lose many races
-        if (!std::any_of(this->state->checkpoints.begin(), this->state->checkpoints.end(),
-            [checkpoint](Checkpoint checkpoint_a) {
-                return checkpoint_a.x == checkpoint.x && checkpoint_a.y == checkpoint.y;
-            })) {
-            this->state->checkpoints.push_back(checkpoint);
-        }
-
-        // Set current_checkpoint to the position of the checkpoint in checkpoints
-        for (int i = 0; i < this->state->checkpoints.size(); i++) {
-            if (this->state->checkpoints[i].x == checkpoint.x &&
-                this->state->checkpoints[i].y == checkpoint.y) {
-                current_checkpoint = i;
-            }
-        }
-    }
-
-    DEBUG("Current checkpoint: " << current_checkpoint);
 }
 
 #define CANVAS_WIDTH 16000
