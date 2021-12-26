@@ -150,7 +150,7 @@ int main(const int argc, const char *argv[]) {
 
     // Attempt to compile mudpath-test.cpp
     std::cout << "[sourcer] Compiling mudpath test" << std::endl;
-    std::string compile_command = "g++ -std=c++17 -o mudpath-test mudpath-test.cpp";
+    std::string compile_command = "g++ -std=c++17 -o mudpath-test mudpath-test.cpp -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused";
     auto pipe = popen(compile_command.c_str(), "r");
     if (!pipe) {
         throw std::runtime_error("[sourcer] Unable to compile mudpath test. Popen failed.");

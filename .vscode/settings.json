@@ -62,11 +62,11 @@
         "commands": [
             {
                 "match": "\\.cpp$",
-                "cmd": "./sourcer"
+                "cmd": "./sourcer --keep"
             },
             {
                 "match": "\\.h$",
-                "cmd": "./sourcer"
+                "cmd": "./sourcer --keep"
             }
         ]
     },

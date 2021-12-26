@@ -5,14 +5,24 @@
 #include "state.h"
 #include "debug.h"
 
+#define CANVAS_WIDTH 16000
+#define CANVAS_HEIGHT 9000
+
+#if LEAGUE >= 6
+#define NAME "Two Wheels and a Bullet"
+#else
+#define NAME "Unique Machine"
+#endif
+
 class Bot {
 private:
     Circle steering_circle;
+public:
     std::shared_ptr<State> state;
     std::shared_ptr<State> old_state;
-public:
-    Bot(std::shared_ptr<State> state) : state(state) {
-        DEBUG("Started Mudpath: " << state->getName())
+
+    Bot(std::shared_ptr<State> _state) : state(_state) {
+        DEBUG("Started Mudpath: " << NAME)
     }
 
     Point target;

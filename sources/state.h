@@ -1,6 +1,9 @@
 #include <string>
 #include <vector>
 #include "utilities.h"
+#ifndef LEAGUE
+#define LEAGUE 6
+#endif
 
 struct AwareArea {
     int radius = 4400;
@@ -8,8 +11,8 @@ struct AwareArea {
     float threshold = 0.05;
 };
 
-struct State
-{
+struct State {
+#if LEAGUE <= 5
     int x;
     int y;
     int next_checkpoint_x;
@@ -32,4 +35,20 @@ struct State
     std::string getName() {
         return "Mud";
     }
+#else
+    float x;
+    float y;
+    float vx;
+    float vy;
+    float angle;
+    int next_checkpoint_id;
+    int target_x;
+    int target_y;
+    int power;
+
+    bool shield = false;
+    int shield_counter = 0;
+
+    std::string action;
+#endif
 };

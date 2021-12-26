@@ -1,11 +1,11 @@
 #include <memory>
 #include <iostream>
 #include <cmath>
+#include <string>
 #include "utilities.h"
 #include "state.h"
 #include "bot.h"
 #include "algorithm"
-#define LEAGUE 5 // 1 = Wood 3, 2 = Wood 2, 3 = Wood 1, 4 = Bronze, 5 = Silver, 6 = Gold, 7 = Legend
 
 void Bot::setTarget(int x, int y) {
     this->state->target_x = x;
@@ -20,7 +20,7 @@ void Bot::setAction(std::string action) {
     this->state->action = action;
 }
 
-int current_checkpoint = 0;
+#if LEAGUE < 6
 void Bot::update_state(std::unique_ptr<State>& state) {
     this->old_state = std::move(this->state);
     this->state = std::move(state);
@@ -32,9 +32,9 @@ void Bot::update_state(std::unique_ptr<State>& state) {
     DEBUG("Opponent X: " << this->state->opponent_x);
     DEBUG("Opponent Y: " << this->state->opponent_y);
 }
+#endif
 
-#define CANVAS_WIDTH 16000
-#define CANVAS_HEIGHT 9000
+#if LEAGUE <= 5
 #define MAX_POWER 100
 #define MIN_POWER 30
 #define MAX_ANGLE 120
@@ -87,6 +87,8 @@ void Bot::update(int current_turn) {
     // Multiply angle_x and angle_y by the speed of the bot (the current position - the position of the turn before)
     int bot_speed_x = this->state->x - this->old_state->x;
     int bot_speed_y = this->state->y - this->old_state->y;
+    DEBUG("Bot speed x: " << bot_speed_x);
+    DEBUG("Bot speed y: " << bot_speed_y);
     int offset_multiplier = -((int) M_PI); // Cast M_PI to integer
     int offset_x = offset_multiplier * bot_speed_x;
     int offset_y = offset_multiplier * bot_speed_y;
@@ -121,24 +123,6 @@ void Bot::update(int current_turn) {
         this->state->power = MAX_POWER;
     }
 
-    // TODO: Fix this. The shield should be enabled when the opponent is surely colliding
-    // and the velocity is enough to recover from the collision
-    if (LEAGUE >= 5) {
-        if (
-            this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed
-            // If the distance of the opponent is less than closest_allowed / 2
-            && (
-                std::abs(opponent_distance_x) < this->state->aware_area.closest_allowed / 2
-                || std::abs(opponent_distance_y) < this->state->aware_area.closest_allowed / 2
-            )
-            // If the angle is 7 or less
-            && std::abs(this->state->next_checkpoint_angle) <= 7
-        ) {
-            // Enable shield to reduce impaect
-            // this->state->action = "SHIELD";
-        }
-    }
-
     // If the angle is > 30, set power to 0
     if (std::abs(this->state->next_checkpoint_angle) > MAX_ANGLE) {
         this->state->power = 0;
@@ -148,39 +132,45 @@ void Bot::update(int current_turn) {
 
     // If the distance from the opponent is less than closest_allowed, and
     // the distance to the next_checkpoint is less than closest_allowed
-    if (LEAGUE >= 5) {
-        // Collisions are enabled after Bronze league, but this behavior is only useful for Silver
-        if (
-            opponent_distance < this->state->aware_area.closest_allowed
-            && this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed
-            && is_boost_available
-        ) {
-            if (opponent_to_checkpoint_distance < this->state->next_checkpoint_dist) {
-                // If the angle is < MAX_ANGLE / 2, aim at the opponent
-                if (std::abs(this->state->next_checkpoint_angle) < MAX_ANGLE / 2) {
-                    is_boost_available = false;
-                    this->state->target_x = this->state->opponent_x - 40;
-                    this->state->target_y = this->state->opponent_y - 40;
-                    this->state->action = "BOOST";
-                }
+#if LEAGUE <= 5
+    if (
+        opponent_distance < this->state->aware_area.closest_allowed
+        && this->state->next_checkpoint_dist < this->state->aware_area.closest_allowed
+        && is_boost_available
+    ) {
+        if (opponent_to_checkpoint_distance < this->state->next_checkpoint_dist) {
+            // If the angle is < MAX_ANGLE / 2, aim at the opponent
+            if (std::abs(this->state->next_checkpoint_angle) < MAX_ANGLE / 2) {
+                is_boost_available = false;
+                this->state->target_x = this->state->opponent_x - 40;
+                this->state->target_y = this->state->opponent_y - 40;
+                this->state->action = "BOOST";
             }
         }
-    } else if (LEAGUE == 4) {
-        // If the distance from the checkpoint is more than MIN_BOOST_DISTANCE
-        // and the absolute angle is less than 5, boost
-        if (
-            this->state->next_checkpoint_dist > MIN_BOOST_DISTANCE
-            && std::abs(this->state->next_checkpoint_angle) < 5
-        ) {
-            this->state->action = "BOOST";
-        }
     }
+#elif LEAGUE == 2 or LEAGUE == 3
+    // If the distance from the checkpoint is more than MIN_BOOST_DISTANCE
+    // and the absolute angle is less than 5, boost
+    if (
+        this->state->next_checkpoint_dist > MIN_BOOST_DISTANCE
+        && std::abs(this->state->next_checkpoint_angle) < 5
+    ) {
+        this->state->action = "BOOST";
+    }
+#endif
 
     DEBUG("Opponent distance: " << opponent_distance_x);
     DEBUG("Target X: " << this->state->target_x);
     DEBUG("Target Y: " << this->state->target_y);
     DEBUG("Power: " << this->state->power);
 }
+#else
+void Bot::update(int current_turn) {
+    // Since we delegated all the processing to the Simulation class, we just
+    // need to perform a little bit of processing on the state to
+    // transform it into the format that the game expects
+}
+#endif
 
 void Bot::output() {
     std::cout <<
