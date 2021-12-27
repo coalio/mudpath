@@ -2,7 +2,7 @@
 #include <vector>
 #include "state.h"
 #include "utilities.h"
-#define MAX_MOVES 6
+#define MAX_MOVES 100
 #define MAX_SOLUTIONS 5
 #define BOT_RADIUS 400
 // The genetic algorithm is designed to run as many

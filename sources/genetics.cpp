@@ -4,6 +4,7 @@
 #include "bot.h"
 #include "state.h"
 #include "utilities.h"
+#include <algorithm>
 using index_t = std::vector<int>::size_type;
 
 void Genetics::Simulation::end(float &vx, float &vy, float &x, float &y) {
@@ -164,24 +165,24 @@ Genetics::Solution Genetics::Simulation::run(
     Genetics::Collision* prev_collision = NULL;
     Genetics::Collision* curr_collision = NULL;
 
-    std::vector<Genetics::Solution> solutions;
+    Genetics::Solution solutions[MAX_SOLUTIONS];
 
     // Generate solutions
     for (index_t solution_i = 0; solution_i < MAX_SOLUTIONS; solution_i++) {
-        solutions.push_back(Genetics::Solution());
+        solutions[solution_i] = Genetics::Solution();
         solutions[solution_i].checkpoints_passed = 0;
         solutions[solution_i].final_timeout = timeout;
 
-        float thrust = std::rand() % 200;
+        float thrust = std::rand() % 100;
 
         if (thrust > 100.0) {
             thrust = 100.0;
         }
 
         for (int move_i = 0; move_i < MAX_MOVES; move_i++) {
+            t = 0.0;
             solutions[solution_i].moves_racer[move_i] = Genetics::Move();
             solutions[solution_i].moves_hunter[move_i] = Genetics::Move();
-            t = 0.0;
 
             while (t < 1.0) {
                 if (curr_collision != NULL) {
@@ -190,15 +191,76 @@ Genetics::Solution Genetics::Simulation::run(
 
                 // We look for all the collisions that are going to occur during the turn
                 for (int i = 0; i < 4; i++) {
+                    Point target;
+
+                    if (i == 0) {
+                        // Aim at the next checkpoint and give it a small deviation
+                        float deviation_x =
+                            (std::rand() % 1200) *
+                            checkpoint_units[states[i]->next_checkpoint_id].x /
+                            2400;
+
+                        float deviation_y =
+                            (std::rand() % 1200) *
+                            checkpoint_units[states[i]->next_checkpoint_id].y /
+                            2400;
+                        target = Point {
+                            checkpoint_units[states[i]->next_checkpoint_id].x
+                                + deviation_x,
+                            checkpoint_units[states[i]->next_checkpoint_id].y
+                                + deviation_y
+                        };
+                    } else if (i == 1) {
+                        // Aim at the opponent's racer
+                        State enemy_racer;
+                        // Find the one with the closest distance to its next checkpoint
+                        float min_distance = INFINITY;
+                        for (int j = 0; j < 4; j++) {
+                            if (j == i) {
+                                continue;
+                            }
+
+                            float distance = Genetics::Simulation::distance(
+                                Point {
+                                    states[j]->x,
+                                    states[j]->y
+                                },
+                                Point {
+                                    checkpoint_units[states[j]->next_checkpoint_id].x,
+                                    checkpoint_units[states[j]->next_checkpoint_id].y
+                                }
+                            );
+
+                            if (distance < min_distance) {
+                                min_distance = distance;
+                                enemy_racer = *states[j];
+                            }
+                        }
+
+                        target = Point {
+                            enemy_racer.x + enemy_racer.vx, // Aim at the racer's next position
+                            enemy_racer.y + enemy_racer.vy
+                        };
+                    } else if (i == 2){
+                        // Aim at their next checkpoint
+                        target = Point {
+                            checkpoint_units[states[i]->next_checkpoint_id].x,
+                            checkpoint_units[states[i]->next_checkpoint_id].y
+                        };
+                    } else {
+                        // Aim at our next checkpoint
+                        target = Point {
+                            checkpoint_units[states[1]->next_checkpoint_id].x,
+                            checkpoint_units[states[1]->next_checkpoint_id].y
+                        };
+                    }
+
                     float angle = Genetics::Simulation::diff_angle(
-                        Point {
+                        Point{
                             units[i].x,
                             units[i].y
                         },
-                        Point {
-                            checkpoint_units[states[i]->next_checkpoint_id].x,
-                            checkpoint_units[states[i]->next_checkpoint_id].y
-                        },
+                        target,
                         units[i].angle
                     );
 
@@ -212,28 +274,13 @@ Genetics::Solution Genetics::Simulation::run(
                         solutions[solution_i].moves_hunter[move_i].thrust = thrust;
                     }
 
-                    angle += units[i].angle;
-
-                    if (angle >= 360.0) {
-                        angle = angle - 360.0;
-                    } else if (angle < 0.0) {
-                        angle += 360.0;
-                    }
-
-                    angle = angle * M_PI / 180.0;
-                    float px = units[i].x + cos(angle) * 10000.0;
-                    float py = units[i].y + sin(angle) * 10000.0;
-
                     // Aim at the target and boost
                     Genetics::Simulation::rotate(
                         Point {
                             units[i].x,
                             units[i].y
                         },
-                        Point {
-                            px,
-                            py
-                        },
+                        target,
                         units[i].angle
                     );
                     Genetics::Simulation::boost(

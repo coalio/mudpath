@@ -1,8 +1,9 @@
 #define DEBUG_MODE 1
+#define PRINT_INIT 1
 #if DEBUG_MODE
-#define LINENUM 1
+#define LINENUM 0
 // print line number
-#if LINENUM == 1
+#if LINENUM
     #define DEBUG(msg) std::cerr << "[" << __LINE__ << "] " << msg << std::endl;
 #else
     #define DEBUG(msg) std::cerr << msg << std::endl;

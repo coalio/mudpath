@@ -203,12 +203,14 @@ void Bot::update(Genetics::Move turn) {
     );
 
     DEBUG("Expected angle: " << new_angle)
+
+    this->state->angle = new_angle;
 }
 #endif
 
 void Bot::output() {
     std::cout <<
-        this->state->target_x << " " << this->state->target_y << " ";
+        std::round(this->state->target_x) << " " << std::round(this->state->target_y) << " ";
 
     if (this->state->action == "") {
         std::cout << this->state->power << std::endl;

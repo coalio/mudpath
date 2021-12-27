@@ -1,4 +1,10 @@
 #define LEAGUE 6 // 1 = Wood 3, 2 = Wood 2, 3 = Wood 1, 4 = Bronze, 5 = Silver, 6 = Gold, 7 = Legend
+#ifdef __INTELLISENSE__
+    // Because of the horribly obscure way we're using the compiler, we need to define these
+    // to avoid false intellisense errors.
+    #pragma diag_suppress 312
+    #pragma diag_suppress 167
+#endif
 
 #include "sources/debug.h"
 #include "sources/utilities.h"
@@ -86,8 +92,9 @@ void Runtime::get_input() {
         int angle; // angle
         int next_check_point_id; // next check point id
         std::cin >> x >> y >> vx >> vy >> angle >> next_check_point_id; std::cin.ignore();
-        DEBUG("Received angle: " << angle)
-
+#if PRINT_INIT
+        DEBUG(x << " " << y << " " << vx << " " << vy << " " << angle << " " << next_check_point_id)
+#endif
         if (i == 0) {
             racer->state->x = x;
             racer->state->y = y;
@@ -114,7 +121,9 @@ void Runtime::get_input() {
         int angle_2; // angle (opponent)
         int next_check_point_id_2; // next check point id (opponent)
         std::cin >> x_2 >> y_2 >> vx_2 >> vy_2 >> angle_2 >> next_check_point_id_2; std::cin.ignore();
-
+#if PRINT_INIT
+        DEBUG(x_2 << " " << y_2 << " " << vx_2 << " " << vy_2 << " " << angle_2 << " " << next_check_point_id_2)
+#endif
         if (i == 0) {
             enemy_1->state->x = x_2;
             enemy_1->state->y = y_2;
@@ -141,13 +150,19 @@ void Runtime::start() {
 #if LEAGUE >= 6
     // After Gold League
     int laps; std::cin >> laps; std::cin.ignore();
-
     int checkpoint_count; std::cin >> checkpoint_count; std::cin.ignore();
+#if PRINT_INIT
+    DEBUG("Printing init")
+    DEBUG(laps)
+    DEBUG(checkpoint_count)
+#endif
     for (int i = 0; i < checkpoint_count; i++) {
         int checkpoint_x, checkpoint_y;
         std::cin >> checkpoint_x >> checkpoint_y;
         std::cin.ignore();
-
+#if PRINT_INIT
+        DEBUG(checkpoint_x << " " << checkpoint_y)
+#endif
         checkpoints.push_back(
             Checkpoint(checkpoint_x, checkpoint_y)
         );
@@ -229,7 +244,38 @@ void Runtime::start() {
         // Apply the solution to the bots during MAX_MOVES amount of turns
         for (int i = 0; i < MAX_MOVES; i++) {
             DEBUG("Applying move: " << i)
-            DEBUG("Expected X Y: " << elite.moves_racer[i].x << " " << elite.moves_racer[i].y);
+            DEBUG("Expected X Y in Turn " << current_turn + i + 1 << " for racer:")
+            DEBUG("    " << elite.moves_racer[i].x << " " << elite.moves_racer[i].y);
+            DEBUG("Expected X Y in Turn " << current_turn + i + 1 << " for hunter:")
+            DEBUG("    " << elite.moves_hunter[i].x << " " << elite.moves_hunter[i].y);
+            DEBUG("Current X Y in Turn " << current_turn << " for racer:")
+            DEBUG("    " << racer->state->x << " " << racer->state->y);
+            DEBUG("Current X Y in Turn " << current_turn << " for hunter:");
+            DEBUG("    " << hunter->state->x << " " << hunter->state->y);
+            DEBUG("Distance from current racer position to expected")
+            float dist = Genetics::Simulation::distance(
+                Point {
+                    racer->state->x,
+                    racer->state->y
+                },
+                Point {
+                    elite.moves_racer[i].x,
+                    elite.moves_racer[i].y
+                }
+            );
+            DEBUG("    " << dist);
+            DEBUG("Distance from current hunter position to expected")
+            dist = Genetics::Simulation::distance(
+                Point {
+                    hunter->state->x,
+                    hunter->state->y
+                },
+                Point {
+                    elite.moves_hunter[i].x,
+                    elite.moves_hunter[i].y
+                }
+            );
+            DEBUG("    " << dist);
             racer->update(
                 elite.moves_racer[i]
             );
