@@ -5,6 +5,7 @@
 #include "utilities.h"
 #include "state.h"
 #include "bot.h"
+#include "genetics.h"
 #include "algorithm"
 
 void Bot::setTarget(int x, int y) {
@@ -165,10 +166,43 @@ void Bot::update(int current_turn) {
     DEBUG("Power: " << this->state->power);
 }
 #else
-void Bot::update(int current_turn) {
+void Bot::update(Genetics::Move turn) {
     // Since we delegated all the processing to the Simulation class, we just
     // need to perform a little bit of processing on the state to
     // transform it into the format that the game expects
+    DEBUG("Updating bot: " <<  turn.angle << ", " << turn.thrust);
+    float a = this->state->angle + turn.angle;
+
+    if (a >= 360.0) {
+        a = a - 360.0;
+    } else if (a < 0.0) {
+        a += 360.0;
+    }
+
+    // Look for a point corresponding to the angle we want
+    // Multiply by 10000.0 to limit rounding errors
+    a = a * M_PI / 180.0;
+    float px = this->state->x + std::cos(a) * 10000.0;
+    float py = this->state->y + std::sin(a) * 10000.0;
+
+    this->state->target_x = px;
+    this->state->target_y = py;
+    this->state->power = turn.thrust;
+
+    float new_angle = this->state->angle;
+    Genetics::Simulation::rotate(
+        Point {
+            this->state->x,
+            this->state->y
+        },
+        Point {
+            static_cast<float>(this->state->target_x),
+            static_cast<float>(this->state->target_y)
+        },
+        new_angle
+    );
+
+    DEBUG("Expected angle: " << new_angle)
 }
 #endif
 

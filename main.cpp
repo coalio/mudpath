@@ -3,16 +3,17 @@
 #include "sources/debug.h"
 #include "sources/utilities.h"
 #include "sources/state.h"
-#include "sources/bot.h"
-#include "sources/bot.cpp"
 #include "sources/genetics.h"
 #include "sources/genetics.cpp"
+#include "sources/bot.h"
+#include "sources/bot.cpp"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <memory>
 #include <utility>
+
 #if LEAGUE >= 6
 #define MODE "GENETIC"
 #else
@@ -85,6 +86,7 @@ void Runtime::get_input() {
         int angle; // angle
         int next_check_point_id; // next check point id
         std::cin >> x >> y >> vx >> vy >> angle >> next_check_point_id; std::cin.ignore();
+        DEBUG("Received angle: " << angle)
 
         if (i == 0) {
             racer->state->x = x;
@@ -93,7 +95,6 @@ void Runtime::get_input() {
             racer->state->vy = vy;
             racer->state->angle = angle;
             racer->state->next_checkpoint_id = next_check_point_id;
-            DEBUG("Input: " << x << " " << y << " " << vx << " " << vy << " " << angle << " " << next_check_point_id)
         } else {
             hunter->state->x = x;
             hunter->state->y = y;
@@ -158,10 +159,10 @@ void Runtime::start() {
     while (
         this->get_input(), true
     ) {
-        std::unique_ptr<State> updated_state(new State());
         current_turn++;
         DEBUG("Turn: " << current_turn);
 #if LEAGUE < 6
+        std::unique_ptr<State> updated_state(new State());
         updated_state->x = this->x;
         updated_state->y = this->y;
         updated_state->next_checkpoint_x = this->next_checkpoint_x;
@@ -177,55 +178,69 @@ void Runtime::start() {
         // Output
         bot->output();
 #else
-    racer->setTarget(
-        checkpoints[
-            static_cast<std::vector<int>::size_type>(
-                racer->state->next_checkpoint_id
-            )
-        ].x,
+        racer->setTarget(
+            checkpoints[
+                static_cast<std::vector<int>::size_type>(
+                    racer->state->next_checkpoint_id
+                )
+            ].x,
 
-        checkpoints[
-            static_cast<std::vector<int>::size_type>(
-                racer->state->next_checkpoint_id
-            )
-        ].y
-    );
+            checkpoints[
+                static_cast<std::vector<int>::size_type>(
+                    racer->state->next_checkpoint_id
+                )
+            ].y
+        );
 
-    hunter->setTarget(
-        checkpoints[
-            static_cast<std::vector<int>::size_type>(
-                hunter->state->next_checkpoint_id
-            )
-        ].x,
+        hunter->setTarget(
+            checkpoints[
+                static_cast<std::vector<int>::size_type>(
+                    hunter->state->next_checkpoint_id
+                )
+            ].x,
 
-        checkpoints[
-            static_cast<std::vector<int>::size_type>(
-                hunter->state->next_checkpoint_id
-            )
-        ].y
-    );
+            checkpoints[
+                static_cast<std::vector<int>::size_type>(
+                    hunter->state->next_checkpoint_id
+                )
+            ].y
+        );
 
-    racer->setAcceleration(100);
-    hunter->setAcceleration(20);
+        racer->setAcceleration(100);
+        hunter->setAcceleration(20);
 
-    // Start simulation
-    Genetics::Simulation simulation;
+        // Start simulation
+        Genetics::Simulation simulation;
 
-    // Under this context, I want to avoid STL containers
-    State* states[4];
-    states[0] = racer->state.get();
-    states[1] = hunter->state.get();
-    states[2] = enemy_1->state.get();
-    states[3] = enemy_2->state.get();
+        // Under this context, I want to avoid STL containers
+        State* states[4];
+        states[0] = racer->state.get();
+        states[1] = hunter->state.get();
+        states[2] = enemy_1->state.get();
+        states[3] = enemy_2->state.get();
 
-    simulation.run(
-        states,
-        checkpoints,
-        timeout
-    );
+        DEBUG("Simulating " << MAX_SOLUTIONS << " solutions...");
+        Genetics::Solution elite = simulation.run(
+            states,
+            checkpoints,
+            timeout
+        );
 
-    racer->output();
-    hunter->output();
+        // Apply the solution to the bots during MAX_MOVES amount of turns
+        for (int i = 0; i < MAX_MOVES; i++) {
+            DEBUG("Applying move: " << i)
+            DEBUG("Expected X Y: " << elite.moves_racer[i].x << " " << elite.moves_racer[i].y);
+            racer->update(
+                elite.moves_racer[i]
+            );
+
+            hunter->update(
+                elite.moves_hunter[i]
+            );
+
+            racer->output();
+            hunter->output();
+        }
 #endif
     }
 }

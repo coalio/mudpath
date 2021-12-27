@@ -98,12 +98,12 @@ float Genetics::Solution::evaluate() {
     }
 
     // Racer is evaluated by the distance to the target and checkpoints passed
-    // Hunter is evaluated by how many times it collided with the opponent
+    // Hunter is evaluated by how many times it collided
     score_racer += this->checkpoints_passed << 16;
-    score_hunter += this->hunter_collisions << 15;
+    score_hunter += this->hunter_collisions << 3;
 
-    Genetics::Move racer_last_state = this->moves_racer[MAX_MOVES];
-    Genetics::Move hunter_last_state = this->moves_hunter[MAX_MOVES];
+    Genetics::Move racer_last_state = this->moves_racer[MAX_MOVES - 1];
+    Genetics::Move hunter_last_state = this->moves_hunter[MAX_MOVES - 1];
 
     this->final_distance_r = Genetics::Simulation::distance(
         Point {
@@ -167,13 +167,21 @@ Genetics::Solution Genetics::Simulation::run(
     std::vector<Genetics::Solution> solutions;
 
     // Generate solutions
-    for (index_t solution_i; solution_i < MAX_SOLUTIONS; solution_i++) {
+    for (index_t solution_i = 0; solution_i < MAX_SOLUTIONS; solution_i++) {
         solutions.push_back(Genetics::Solution());
         solutions[solution_i].checkpoints_passed = 0;
+        solutions[solution_i].final_timeout = timeout;
 
-        for (int move_i; move_i < MAX_MOVES; move_i++) {
+        float thrust = std::rand() % 200;
+
+        if (thrust > 100.0) {
+            thrust = 100.0;
+        }
+
+        for (int move_i = 0; move_i < MAX_MOVES; move_i++) {
             solutions[solution_i].moves_racer[move_i] = Genetics::Move();
             solutions[solution_i].moves_hunter[move_i] = Genetics::Move();
+            t = 0.0;
 
             while (t < 1.0) {
                 if (curr_collision != NULL) {
@@ -182,15 +190,19 @@ Genetics::Solution Genetics::Simulation::run(
 
                 // We look for all the collisions that are going to occur during the turn
                 for (int i = 0; i < 4; i++) {
-                    // Calculate random angle and thrust
-                    float angle = std::rand() % 18;
-                    // Randomly unary negate the angle
-                    if (std::rand() % 2 == 0) {
-                        angle = -angle;
-                    }
+                    float angle = Genetics::Simulation::diff_angle(
+                        Point {
+                            units[i].x,
+                            units[i].y
+                        },
+                        Point {
+                            checkpoint_units[states[i]->next_checkpoint_id].x,
+                            checkpoint_units[states[i]->next_checkpoint_id].y
+                        },
+                        units[i].angle
+                    );
 
-                    angle = units[i].angle + angle;
-                    float thrust = std::rand() % (100 + 1);
+                    units[i].thrust = thrust;
 
                     if (i == 0) {
                         solutions[solution_i].moves_racer[move_i].angle = angle;
@@ -200,7 +212,7 @@ Genetics::Solution Genetics::Simulation::run(
                         solutions[solution_i].moves_hunter[move_i].thrust = thrust;
                     }
 
-                    units[i].thrust = thrust;
+                    angle += units[i].angle;
 
                     if (angle >= 360.0) {
                         angle = angle - 360.0;
@@ -209,8 +221,8 @@ Genetics::Solution Genetics::Simulation::run(
                     }
 
                     angle = angle * M_PI / 180.0;
-                    float py = units[i].y + sin(angle) * 10000.0;
                     float px = units[i].x + cos(angle) * 10000.0;
+                    float py = units[i].y + sin(angle) * 10000.0;
 
                     // Aim at the target and boost
                     Genetics::Simulation::rotate(
@@ -230,6 +242,7 @@ Genetics::Solution Genetics::Simulation::run(
                         units[i].vy,
                         units[i].angle
                     );
+
 
                     // Collision with another pod?
                     for (int j = i + 1; j < 4; j++) {
@@ -271,7 +284,6 @@ Genetics::Solution Genetics::Simulation::run(
                     ))
                 ) {
                     // No collision, we can move the pods until the end of the turn
-                    DEBUG("No collision / Duplicate collision. Is duplicate: " << (curr_collision != NULL))
                     for (int i = 0; i < 4; i++) {
                         Genetics::Simulation::move(
                             units[i].x,
@@ -302,7 +314,7 @@ Genetics::Solution Genetics::Simulation::run(
                         units[curr_collision->a.id].y,
                         units[curr_collision->a.id].vx,
                         units[curr_collision->a.id].vy,
-                        timeout,
+                        solutions[solution_i].final_timeout,
                         solutions[solution_i].checkpoints_passed,
                         states[curr_collision->a.id]->shield,
                         curr_collision->b
@@ -316,10 +328,6 @@ Genetics::Solution Genetics::Simulation::run(
                     }
                 }
 
-                solutions[solution_i].moves_racer[move_i].angle = units[0].angle;
-                solutions[solution_i].moves_hunter[move_i].angle = units[1].angle;
-                solutions[solution_i].moves_racer[move_i].thrust = units[0].thrust;
-                solutions[solution_i].moves_hunter[move_i].thrust = units[1].thrust;
                 solutions[solution_i].moves_racer[move_i].x = units[0].x;
                 solutions[solution_i].moves_racer[move_i].y = units[0].y;
                 solutions[solution_i].moves_hunter[move_i].x = units[1].x;
@@ -335,10 +343,7 @@ Genetics::Solution Genetics::Simulation::run(
                 );
             }
 
-            for (int i = 0; i < 4; i++) {
-                // Print the units
-                DEBUG("Unit " << i << ": X" << units[i].x << " Y" << units[i].y << " VX" << units[i].vx << " VY" << units[i].vy);
-            }
+            solutions[solution_i].final_timeout--;
         }
 
         // Restart the units
@@ -380,7 +385,7 @@ Genetics::Solution Genetics::Simulation::run(
         DEBUG("Solution " << i << ": " << scores[i]);
     }
 
-    return solutions[1];
+    return solutions[MAX_SOLUTIONS - 1]; // Last solution is the best
 }
 
 Genetics::Collision* Genetics::Simulation::await_collision(Genetics::Unit self, Genetics::Unit other) {
@@ -392,7 +397,6 @@ Genetics::Collision* Genetics::Simulation::await_collision(Genetics::Unit self, 
 
     if (dist < squared_radius) {
         // Objects are already touching each other. We have an immediate collision.
-        DEBUG("Returning collision: dist < squared_radius: " << dist << " < " << squared_radius);
         return new Genetics::Collision(self, other, 0.0);
     }
 
@@ -462,7 +466,7 @@ void Genetics::Simulation::bounce(
 ) {
     if (other.is_checkpoint) {
         // Collision with a checkpoint
-        timeout = 100;
+        timeout = 101; // + 1 so its 100 and not 99 for the next turn
         checkpoints_passed++;
         return;
     } else {

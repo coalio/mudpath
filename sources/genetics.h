@@ -1,10 +1,9 @@
 #include <memory>
 #include <vector>
-#include "bot.h"
 #include "state.h"
 #include "utilities.h"
 #define MAX_MOVES 6
-#define MAX_SOLUTIONS 10
+#define MAX_SOLUTIONS 5
 #define BOT_RADIUS 400
 // The genetic algorithm is designed to run as many
 // calculations as possible per turn. The performance
@@ -88,11 +87,11 @@ namespace Genetics {
             );
             void end(float &vx, float &vy, float &x, float &y);
 
-            static float distance(Point a, Point b);
-            static float distance_base(Point a, Point b);
-            static float get_angle(Point point_a, Point point_b);
-            static float diff_angle(Point a, Point , float angle);
-            static void rotate(Point a, Point b, float &ref_angle);
+            static float distance(Point pos, Point target_pos);
+            static float distance_base(Point pos, Point target_pos);
+            static float get_angle(Point pos, Point target_pos);
+            static float diff_angle(Point post, Point target_pos, float angle);
+            static void rotate(Point pos, Point target_pos, float &ref_angle);
             static void boost(int thrust, float &vx, float &vy, float angle);
             static void move(float &x, float &y, float vx, float vy, float t);
             static void bounce(
